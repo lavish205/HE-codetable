@@ -12,13 +12,13 @@
 			font-family: 'Open Sans',sans-serif;
 		}
 		.page-header {
-	    	background-color: #323754;
-	    	margin-top: 0;
-		    height: 50px;
-		    padding: 8px;
+			background-color: #323754;
+			margin-top: 0;
+			height: 50px;
+			padding: 8px;
 		}
 		.page-header  img {
-		    height: 30px;
+			height: 30px;
 		}
 		.container-fluid{
 			margin: 50px;
@@ -33,69 +33,88 @@
 			resize: none;
 		}
 		.output {
-		    border: 1px dashed #ddd;
-		    margin: 20px 0;
-		    padding: 20px;
+			border: 1px dashed #ddd;
+			margin: 20px 0;
+			padding: 20px;
 		}
 		.strong{font-weight: 700;}
 	</style>
 </head>
 <body>
 	<header id="header" class="page-header">
-	    <a href="/" class="">
-        	<img src="https://hackerearth.global.ssl.fastly.net/static/codetable/images/codetable-logo.png"/>
-        </a>
+		<a href="/" class="">
+			<img src="https://hackerearth.global.ssl.fastly.net/static/codetable/images/codetable-logo.png"/>
+		</a>
 	</header><!-- /header -->
 	<div class="container-fluid">
 		<div class="filename-bar">
-	        <div id="filename" class="filename strong" title="Click to rename">Untitled File</div>
-	        <div class="filename-text hidden">
+			<div id="filename" class="filename strong" title="Click to rename">Untitled File</div>
+			<div class="filename-text hidden">
 
-	                <div>
-	                    <input type="text" name="newfilename">
-	                    <button type="button" class="btn btn-info btn-sm" id="savefilename">Save</button>
-	                    <button id="cancelfilename" class="btn btn-danger btn-sm">Cancel</button>
-	                </div>
+				<div>
+					<input type="text" name="newfilename">
+					<button type="button" class="btn btn-info btn-sm" id="savefilename">Save</button>
+					<button id="cancelfilename" class="btn btn-danger btn-sm">Cancel</button>
+				</div>
 
-	        </div>
-    	</div>
-    	<hr>
+			</div>
+		</div>
+		<hr>
 		<div class="row">
 			<div class="col-md-8">
+                <form method="POST" action="/hackerearth/#output">
 				<div class="panel panel-default">
-				  <div class="panel-heading clearfix">
-				  	<select name="dropdown">
-				  		<option value="c">C</option>
-				  		<option value="python">Python</option>
-				  	</select>
-				  	<button class="pull-right btn btn-primary btn-sm">save</button>
-				  </div>
-				  <div class="panel-body">
-				  	<code>
-				    <textarea name="editor" id="editor"></textarea>
-				    </code>
-				  </div>
+					<div class="panel-heading clearfix">
+						<select name="language">
+							<option value="C">C</option>
+							<option value="CPP">CPP</option>
+							<option value="CPP11">CPP11</option>
+							<option value="CLOJURE">CLOJURE</option>
+							<option value="CSHARP">CSHARP</option>
+							<option value="JAVA">JAVA</option>
+							<option value="JAVASCRIPT">JAVASCRIPT</option>
+							<option value="HASKELL">HASKELL</option>
+							<option value="PERL">PERL</option>
+							<option value="PHP">PHP</option>
+							<option value="PYTHON">PYTHON</option>
+							<option value="RUBY">RUBY</option>
+						</select>
+						<button class="pull-right btn btn-primary btn-sm">save</button>
+					</div>
+					<div class="panel-body">
+						<code>
+							<textarea name="code" id="editor"></textarea>
+						</code>
+					</div>
 				</div>
 				<div class="optional">
 					<div class="checkbox">
 						<label>
-						<input type="checkbox" name="customcheckbox">Use custom input for testing your code
+							<input type="checkbox" name="customcheckbox">Use custom input for testing your code
 						</label>
 					</div>
 					<textarea name="custominput" class="form-control hidden"></textarea>
 				</div>
 				<hr>
 				<div class="clearfix">
-					<button class="btn btn-success pull-right" type="">Compile and test</button>
+					<button class="btn btn-success pull-right">Compile and test</button>
 				</div>
-				<div class="output">
+                </form>
+                {% if run_status %}
+				<div class="output" id="output">
 					<h5><strong>Compilation Log</strong></h5>
 					<hr>
-					<div class="alert alert-success">{{ log_status }}</div>
+
+					<div class="alert {% if run_status.status != "AC" %}alert-danger {% else %} alert-success {% endif %}">
+                        {{ compile_status }}</div>
 					<br />
 					<h5><strong>Output</strong></h5>
 					<hr>
-					<p class="help-block">Standard output is empty {{ output }}</p>
+                    {% if run_status and run_status.output_html %}
+					    <code>{{ run_status.output_html|safe }}</code>
+                    {% else %}
+                        <p class="help-block">Standard output is empty </p>
+                    {% endif %}
 					<br />
 					<h5><strong>Input</strong></h5>
 					<hr>
@@ -113,22 +132,25 @@
 						</thead>
 						<tbody>
 							<tr>
-								<td><strong>{{ result.id }}</strong></td>
-								<td>{{ result.time }}</td>
-								<td>{{ result.memory }}</td>
-								<td>{{ result.status }}</td>
-								<td>{{ result.status_details }}</td>
+								<td><strong>{{ code_id }}</strong></td>
+								<td>{{ run_status.time_used }}</td>
+								<td>{{ run_status.memory_used }}</td>
+								<td>{{ run_status.status }}</td>
+								<td>{{ run_status.status_detail }}</td>
 							</tr>
 						</tbody>
 					</table>
 					<div class="help-block">{{ current_time }}</div>
 				</div>
-			</div>
+			{% endif %}
+            </div>
+
 			<!-- col-md-8 -->
 			<div class="col-md-4">
 				<span><strong>Share URL</strong></span>
 				<hr>
-				<button class="btn btn-warning">Generate Public url</button>
+				<button class="btn btn-warning" id="generateUrl">Generate Public url</button>
+                <p class="hidden help-block" id="pubUrl"></p>
 			</div>
 			<!-- col-md-4 -->
 		</div>
@@ -140,53 +162,78 @@
 
 	<script  type="text/javascript">
 		$(document).ready(function(){
-			// set the code from localstorage on reload
-			if(localStorage.getItem('code') && localStorage.getItem('code').length){
-				$('#editor').val(localStorage.getItem('code'));
-			}
-			// set the file name from localstorage on reload
-			if(localStorage.getItem('filename')){
-				$('#filename').html(localStorage.getItem('filename'));
-			}
-			$('#editor').on('keyup',function() {
-				/* Act on the event */
-				if ($(this).val().length) {
-					localStorage.setItem('code', $(this).val());
-				}
-			});
-			$('#filename').click(function() {
-				/* Act on the event */
-				$('.filename-text').removeClass('hidden');
-				$(this).hide();
+            // set the code from localstorage on reload
+            if(localStorage.getItem('code') && localStorage.getItem('code').length){
+                $('#editor').val(localStorage.getItem('code'));
+            }
 
-			});
-			$('#savefilename').click(function(){
-				var filename = $('input[name="newfilename"]').val();
-				if (filename.length) {
-					localStorage.setItem('filename', filename);
-					$('#filename').text(filename);
-					$('#filename').show();
-					$('.filename-text').addClass('hidden');
-				}
+            if(localStorage.getItem('language') && localStorage.getItem('language').length){
+                $('select[name="language"]').val(localStorage.getItem('language'));
+            }
+            // set the file name from localstorage on reload
+            if(localStorage.getItem('filename')){
+                $('#filename').html(localStorage.getItem('filename'));
+            }
+            $('#editor').on('keyup',function() {
+                /* Act on the event */
+                if ($(this).val().length) {
+                    localStorage.setItem('code', $(this).val());
+                }
+            });
+            $('#filename').click(function() {
+                /* Act on the event */
+                $('.filename-text').removeClass('hidden');
+                $(this).hide();
 
-			});
-			$('#cancelfilename').click(function(){
-				$('#filename').show();
-				$('.filename-text').addClass('hidden');
+            });
+            $('#savefilename').click(function(){
+                var filename = $('input[name="newfilename"]').val();
+                if (filename.length) {
+                    localStorage.setItem('filename', filename);
+                    $('#filename').text(filename);
+                    $('#filename').show();
+                    $('.filename-text').addClass('hidden');
+                }
 
-			});
-			// for custom input
-			$('input[name="customcheckbox"]').click(function(){
-				if($(this).prop("checked") == true){
-                	$('textarea[name="custominput"]').removeClass('hidden');
-	            }
-	            else if($(this).prop("checked") == false){
-	                $('textarea[name="custominput"]').addClass('hidden');
-	            }
-			});
+            });
+            $('#cancelfilename').click(function(){
+                $('#filename').show();
+                $('.filename-text').addClass('hidden');
+
+            });
+            $('select[name="language"]').change(function(){
+               localStorage.setItem('language', $(this).val());
+            });
+            // for custom input
+            $('input[name="customcheckbox"]').click(function(){
+                if($(this).prop("checked") == true){
+                    $('textarea[name="custominput"]').removeClass('hidden');
+                }
+                else if($(this).prop("checked") == false){
+                    $('textarea[name="custominput"]').addClass('hidden');
+                }
+            });
+
+            // post request to submit code
+            $('#compileBtn').click(function(){
+               var code = $('#editor').val();
+            });
+            $('#generateUrl').click(function(){
+                var code = $('#editor').val();
+                var language = $('select[name="language"]').val();
+                $.ajax({
+                    url: "/hackerearth/",
+                    method: "PUT",
+                    data: {"code": code, "language": language}
+                }).success(function(response) {
+                    console.log(response)
+                    $("#pubUrl").html("Link: <a href=" + window.location.href + response.url + ">" + window.location.href + response.url + "</a>")
+                    $("#pubUrl").removeClass("hidden");
+                });
+            })
 
 
-		});
-	</script>
+});
+</script>
 </body>
 </html>

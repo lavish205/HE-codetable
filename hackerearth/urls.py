@@ -4,6 +4,6 @@ from .views import CodeView
 
 
 urlpatterns = [
-    url(r'^/$', CodeView.as_view()),
+    url(r'^$', CodeView.as_view()),
 
     ]
