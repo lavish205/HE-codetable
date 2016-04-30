@@ -62,7 +62,7 @@
 		<hr>
 		<div class="row">
 			<div class="col-md-8">
-                <form method="POST" action="/hackerearth/#output">
+                <form method="POST" action="/hackerearth/code/#output">
 				<div class="panel panel-default">
 					<div class="panel-heading clearfix">
 						<select name="language">
@@ -222,12 +222,12 @@
                 var code = $('#editor').val();
                 var language = $('select[name="language"]').val();
                 $.ajax({
-                    url: "/hackerearth/",
+                    url: "/hackerearth/code/",
                     method: "PUT",
                     data: {"code": code, "language": language}
                 }).success(function(response) {
                     console.log(response)
-                    $("#pubUrl").html("Link: <a href=" + window.location.href + response.url + ">" + window.location.href + response.url + "</a>")
+                    $("#pubUrl").html("Link: <a href=" + window.location.origin + window.location.pathname + response.url + ">" + window.location.origin + window.location.pathname + response.url + "</a>")
                     $("#pubUrl").removeClass("hidden");
                 });
             })

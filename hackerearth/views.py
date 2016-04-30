@@ -38,3 +38,19 @@ class CodeView(APIView):
         code_snippet.save()
         response = {"url": code_snippet.url}
         return Response(response)
+
+
+class CodeDetailView(APIView):
+
+    def get(self, request, id, format=None):
+        try:
+            code_snippet = CodeUrls.objects.get(url=id)
+            context = {
+                'code': code_snippet.code,
+                'language': code_snippet.lang
+            }
+            return render(request, 'index.html', context)
+        except CodeUrls.DoesNotExist:
+            print "Not Found"
+            return Response(status=404)
+
