@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Online Compiler/Interpreter | Codetable| HackerEarth</title>
+	<!-- <link rel="stylesheet" href=""> -->
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+	<style type="text/css">
+		body{
+			font-family: 'Open Sans',sans-serif;
+		}
+		.page-header {
+	    	background-color: #323754;
+	    	margin-top: 0;
+		    height: 50px;
+		    padding: 8px;
+		}
+		.page-header  img {
+		    height: 30px;
+		}
+		.container-fluid{
+			margin: 50px;
+		}
+		.panel-body{
+			height: 400px;
+		}
+		.panel-body textarea{
+			height: 98%;
+			width: 99%;
+			padding: 8px;
+			resize: none;
+		}
+		.output {
+		    border: 1px dashed #ddd;
+		    margin: 20px 0;
+		    padding: 20px;
+		}
+		.strong{font-weight: 700;}
+	</style>
+</head>
+<body>
+	<header id="header" class="page-header">
+	    <a href="/" class="">
+        	<img src="https://hackerearth.global.ssl.fastly.net/static/codetable/images/codetable-logo.png"/>
+        </a>
+	</header><!-- /header -->
+	<div class="container-fluid">
+		<div class="filename-bar">
+	        <div id="filename" class="filename strong" title="Click to rename">Untitled File</div>
+	        <div class="filename-text hidden">
+
+	                <div>
+	                    <input type="text" name="newfilename">
+	                    <button type="button" class="btn btn-info btn-sm" id="savefilename">Save</button>
+	                    <button id="cancelfilename" class="btn btn-danger btn-sm">Cancel</button>
+	                </div>
+
+	        </div>
+    	</div>
+    	<hr>
+		<div class="row">
+			<div class="col-md-8">
+				<div class="panel panel-default">
+				  <div class="panel-heading clearfix">
+				  	<select name="dropdown">
+				  		<option value="c">C</option>
+				  		<option value="python">Python</option>
+				  	</select>
+				  	<button class="pull-right btn btn-primary btn-sm">save</button>
+				  </div>
+				  <div class="panel-body">
+				  	<code>
+				    <textarea name="editor" id="editor"></textarea>
+				    </code>
+				  </div>
+				</div>
+				<div class="optional">
+					<div class="checkbox">
+						<label>
+						<input type="checkbox" name="customcheckbox">Use custom input for testing your code
+						</label>
+					</div>
+					<textarea name="custominput" class="form-control hidden"></textarea>
+				</div>
+				<hr>
+				<div class="clearfix">
+					<button class="btn btn-success pull-right" type="">Compile and test</button>
+				</div>
+				<div class="output">
+					<h5><strong>Compilation Log</strong></h5>
+					<hr>
+					<div class="alert alert-success">{{ log_status }}</div>
+					<br />
+					<h5><strong>Output</strong></h5>
+					<hr>
+					<p class="help-block">Standard output is empty {{ output }}</p>
+					<br />
+					<h5><strong>Input</strong></h5>
+					<hr>
+					<p class="help-block">Standard output is empty {{ input }}</p>
+					<br />
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Log ID:</th>
+								<th>Time (sec)</th>
+								<th>Memory (KB)</th>
+								<th>Status</th>
+								<th>Status Details</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td><strong>{{ result.id }}</strong></td>
+								<td>{{ result.time }}</td>
+								<td>{{ result.memory }}</td>
+								<td>{{ result.status }}</td>
+								<td>{{ result.status_details }}</td>
+							</tr>
+						</tbody>
+					</table>
+					<div class="help-block">{{ current_time }}</div>
+				</div>
+			</div>
+			<!-- col-md-8 -->
+			<div class="col-md-4">
+				<span><strong>Share URL</strong></span>
+				<hr>
+				<button class="btn btn-warning">Generate Public url</button>
+			</div>
+			<!-- col-md-4 -->
+		</div>
+		<!-- row -->
+		<hr>
+	</div>
+	<!-- container -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+	<script  type="text/javascript">
+		$(document).ready(function(){
+			// set the code from localstorage on reload
+			if(localStorage.getItem('code') && localStorage.getItem('code').length){
+				$('#editor').val(localStorage.getItem('code'));
+			}
+			// set the file name from localstorage on reload
+			if(localStorage.getItem('filename')){
+				$('#filename').html(localStorage.getItem('filename'));
+			}
+			$('#editor').on('keyup',function() {
+				/* Act on the event */
+				if ($(this).val().length) {
+					localStorage.setItem('code', $(this).val());
+				}
+			});
+			$('#filename').click(function() {
+				/* Act on the event */
+				$('.filename-text').removeClass('hidden');
+				$(this).hide();
+
+			});
+			$('#savefilename').click(function(){
+				var filename = $('input[name="newfilename"]').val();
+				if (filename.length) {
+					localStorage.setItem('filename', filename);
+					$('#filename').text(filename);
+					$('#filename').show();
+					$('.filename-text').addClass('hidden');
+				}
+
+			});
+			$('#cancelfilename').click(function(){
+				$('#filename').show();
+				$('.filename-text').addClass('hidden');
+
+			});
+			// for custom input
+			$('input[name="customcheckbox"]').click(function(){
+				if($(this).prop("checked") == true){
+                	$('textarea[name="custominput"]').removeClass('hidden');
+	            }
+	            else if($(this).prop("checked") == false){
+	                $('textarea[name="custominput"]').addClass('hidden');
+	            }
+			});
+
+
+		});
+	</script>
+</body>
+</html>
