@@ -4,8 +4,8 @@ Front End of [HackerEarth CodeTable](https://code.hackerearth.com) built using h
 ### Project Setup
 #### Installing Requirements
 ```shell
-$ git clone git@github.com:lavish205/logaggregator.git
-$ cd logaggregator
+$ git clone git@github.com:lavish205/HE-codetable.git
+$ cd HE-codetable
 $ pip install -r requirements.txt
 ```
 #### Setting up database
