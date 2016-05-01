@@ -79,7 +79,7 @@
 							<option value="PYTHON">PYTHON</option>
 							<option value="RUBY">RUBY</option>
 						</select>
-						<button class="pull-right btn btn-primary btn-sm">save</button>
+						<button class="pull-right btn btn-primary btn-sm" id="saveCode">save</button>
 					</div>
 					<div class="panel-body">
 						<code>
@@ -180,6 +180,13 @@
                     localStorage.setItem('code', $(this).val());
                 }
             });
+            $('#saveCode').click(function(){
+                if ($('#editor').val()){
+                    localStorage.setItem('code', $('#editor').val())
+                }
+            });
+            
+
             $('#filename').click(function() {
                 /* Act on the event */
                 $('.filename-text').removeClass('hidden');

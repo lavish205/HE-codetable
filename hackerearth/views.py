@@ -6,12 +6,27 @@ from .models import CodeUrls
 import requests
 # Create your views here.
 
-class CodeView(APIView):
 
+class CodeView(APIView):
+    """
+    API Endpoint for compile and run
+    """
     def get(self, request, format=None):
+        """
+        render index template for codetable
+        :param request: request object
+        :param format: json
+        :return: template page of codetable
+        """
         return render(request, 'index.html')
 
     def post(self, request, format=None):
+        """
+        compile and run give code w.r.t language and optional input
+        :param request: request object
+        :param format: json
+        :return: render template with compilation message
+        """
         code = self.request.data.get('code')
         lang = self.request.data.get('language')
         custom_input = self.request.data.get('custominput')
@@ -26,10 +41,15 @@ class CodeView(APIView):
 
         r = requests.post(url, data=params)
         context = r.json()
-        print context
         return render(request, 'index.html', context)
 
     def put(self, request, format=None):
+        """
+        Generate public url of code snippet
+        :param request: request object
+        :param format: json
+        :return: public url
+        """
         code = str(self.request.data.get('code'))
         lang = str(self.request.data.get('language'))
         print type(code), type(lang)
@@ -41,8 +61,17 @@ class CodeView(APIView):
 
 
 class CodeDetailView(APIView):
-
+    """
+    API Endpoint for public url code snippet
+    """
     def get(self, request, id, format=None):
+        """
+        render template with pre filled code
+        :param request: request object
+        :param id: url hash
+        :param format: json
+        :return: render template with pre filled code
+        """
         try:
             code_snippet = CodeUrls.objects.get(url=id)
             context = {
